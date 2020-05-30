@@ -2,18 +2,20 @@ import 'package:first_flutter_brew/services/auth.dart';
 import 'package:flutter/material.dart';
 
 class SignIn extends StatefulWidget {
+  final Function toggleView;
+  SignIn({this.toggleView});
+
   @override
   _SignInState createState() => _SignInState();
 }
 
 class _SignInState extends State<SignIn> {
   final AuthService _auth = AuthService();
+  final _formKey = GlobalKey<FormState>();
 
   bool showSignInForm = false;
   String email = "";
   String password = "";
-
-  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +25,7 @@ class _SignInState extends State<SignIn> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Text(
-            "Sign Up Form:",
+            "Regular Sign In Form:",
             style: TextStyle(fontSize: 40.0, fontFamily: 'Indies'),
           ),
           SizedBox(height: 20.0),
@@ -108,6 +110,21 @@ class _SignInState extends State<SignIn> {
         backgroundColor: Colors.green[500],
         elevation: 0.0,
         title: Text("Sign in to Brew Crew"),
+        actions: <Widget>[
+          FlatButton.icon(
+              onPressed: () {
+                widget
+                    .toggleView(); // widget refers to self widget i.e Register
+              },
+              icon: Icon(
+                Icons.person_add,
+                color: Colors.deepPurple[100],
+              ),
+              label: Text(
+                "Register",
+                style: TextStyle(color: Colors.white),
+              ))
+        ],
       ),
       body: ListView(
         children: <Widget>[
