@@ -1,4 +1,6 @@
+import 'package:first_flutter_brew/screens/style.dart';
 import 'package:first_flutter_brew/services/auth.dart';
+import 'package:first_flutter_brew/shared/loading.dart';
 import 'package:flutter/material.dart';
 
 class Register extends StatefulWidget {
@@ -15,13 +17,14 @@ class _RegisterState extends State<Register> {
   String password = "";
   String error = "";
   bool goBack = false;
+  bool loading = false;
 
   final AuthService _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return loading ? Loading() : Scaffold(
       backgroundColor: Colors.brown[100],
       appBar: AppBar(
         backgroundColor: Colors.green[500],
@@ -61,15 +64,7 @@ class _RegisterState extends State<Register> {
                 height: 20.0,
               ),
               TextFormField(
-                decoration: InputDecoration(
-                  labelText: "Email Address",
-                  labelStyle: TextStyle(fontSize: 22.0),
-                  hintText: "example@host.com",
-                  hintStyle: TextStyle(
-                    color: Colors.grey[400],
-                    fontStyle: FontStyle.italic,
-                  ),
-                ),
+                decoration: textInputDecoration.copyWith(hintText: "Email"),
                 validator: (value) {
                   if (value.isEmpty) {
                     return "Enter an email address";
@@ -86,15 +81,7 @@ class _RegisterState extends State<Register> {
                 height: 20.0,
               ),
               TextFormField(
-                decoration: InputDecoration(
-                  labelText: "Full Name",
-                  labelStyle: TextStyle(fontSize: 22.0),
-                  hintText: "Kiran Parajuli",
-                  hintStyle: TextStyle(
-                    color: Colors.grey[400],
-                    fontStyle: FontStyle.italic,
-                  ),
-                ),
+                decoration: textInputDecoration.copyWith(hintText: "Full Name"),
                 validator: (value) {
                   if (value.isEmpty) {
                     return "Enter your full name.";
@@ -111,15 +98,7 @@ class _RegisterState extends State<Register> {
                 height: 20.0,
               ),
               TextFormField(
-                decoration: InputDecoration(
-                  labelText: "Password",
-                  labelStyle: TextStyle(fontSize: 22.0),
-                  hintText: "password",
-                  hintStyle: TextStyle(
-                    color: Colors.grey[400],
-                    fontStyle: FontStyle.italic,
-                  ),
-                ),
+                decoration: textInputDecoration.copyWith(hintText: "Password"),
                 validator: (value) {
                   if (value.length < 6) {
                     return "Enter a password 6+ characters long.";
@@ -148,12 +127,21 @@ class _RegisterState extends State<Register> {
                     child: Text(" Sign Up "),
                     onPressed: () async {
                       if (_formKey.currentState.validate()) {
+                        setState(() {
+                          loading = true;
+                        });
                         dynamic result = await _auth
                             .registerWithEmailAndPassword(email, password);
                         if (result != null) {
+                          setState(() {
+                            loading = false;
+                          });
                           print("Register success.");
                           print(result.toString());
                         } else {
+                          setState(() {
+                            loading = false;
+                          });
                           print(result);
                           setState(() {
                             error = "Register fails.";

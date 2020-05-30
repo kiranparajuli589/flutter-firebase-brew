@@ -1,4 +1,6 @@
+import 'package:first_flutter_brew/screens/style.dart';
 import 'package:first_flutter_brew/services/auth.dart';
+import 'package:first_flutter_brew/shared/loading.dart';
 import 'package:flutter/material.dart';
 
 class SignIn extends StatefulWidget {
@@ -14,6 +16,7 @@ class _SignInState extends State<SignIn> {
   final _formKey = GlobalKey<FormState>();
 
   bool showSignInForm = false;
+  bool loading = false;
   String email = "";
   String password = "";
   String error = "";
@@ -31,15 +34,7 @@ class _SignInState extends State<SignIn> {
           ),
           SizedBox(height: 20.0),
           TextFormField(
-            decoration: InputDecoration(
-              labelText: "Email Address",
-              labelStyle: TextStyle(fontSize: 22.0),
-              hintText: "example@host.com",
-              hintStyle: TextStyle(
-                color: Colors.grey[400],
-                fontStyle: FontStyle.italic,
-              ),
-            ),
+            decoration: textInputDecoration.copyWith(hintText: "Email"),
             onChanged: (value) {
               setState(() {
                 email = value;
@@ -54,15 +49,7 @@ class _SignInState extends State<SignIn> {
           ),
           SizedBox(height: 20.0),
           TextFormField(
-            decoration: InputDecoration(
-              labelText: "Password",
-              labelStyle: TextStyle(fontSize: 22.0),
-              hintText: "password",
-              hintStyle: TextStyle(
-                color: Colors.grey[400],
-                fontStyle: FontStyle.italic,
-              ),
-            ),
+            decoration: textInputDecoration.copyWith(hintText: "Password"),
             validator: (value) {
               if (value.length < 6) {
                 return "Enter a password 6+ chars long.";
@@ -91,13 +78,20 @@ class _SignInState extends State<SignIn> {
                 child: Text(" Sign In "),
                 onPressed: () async {
                   if (_formKey.currentState.validate()) {
+                    setState(() {
+                      loading = true;
+                    });
                     dynamic result =
                         await _auth.signInWithEmailAndPassword(email, password);
                     if (result == null) {
                       setState(() {
                         error = "Couldn't signin with given credentials.";
+                        loading = false;
                       });
                     } else {
+                      setState(() {
+                        loading = false;
+                      });
                       print("SignIn(email/password) success");
                     }
                   }
@@ -124,12 +118,19 @@ class _SignInState extends State<SignIn> {
         padding: EdgeInsets.symmetric(vertical: 10.0),
         child: Text("   Anonymous Sign In   "),
         onPressed: () async {
+          setState(() {
+            loading = true;
+          });
           dynamic result = await _auth.signInAnonymously();
           if (result == null) {
             setState(() {
               error = "Error signing in.";
+              loading = false;
             });
           } else {
+            setState(() {
+              loading = false;
+            });
             print("SignIn(anonymous) success");
             print(result.uid);
           }
@@ -147,34 +148,41 @@ class _SignInState extends State<SignIn> {
       },
     );
 
-    return Scaffold(
-      backgroundColor: Colors.brown[100],
-      appBar: AppBar(
-        backgroundColor: Colors.green[500],
-        elevation: 0.0,
-        title: Text("Sign in to Brew Crew"),
-        actions: <Widget>[
-          FlatButton.icon(
-              onPressed: () {
-                widget
-                    .toggleView(); // widget refers to self widget i.e Register
-              },
-              icon: Icon(
-                Icons.person_add,
-                color: Colors.deepPurple[100],
+    return loading ? Loading() : Scaffold(
+        backgroundColor: Colors.brown[100],
+        appBar: AppBar(
+          backgroundColor: Colors.green[500],
+          elevation: 0.0,
+          title: Text("Sign in to Brew Crew"),
+          actions: <Widget>[
+            FlatButton.icon(
+                onPressed: () {
+                  widget
+                      .toggleView(); // widget refers to self widget i.e Register
+                },
+                icon: Icon(
+                  Icons.person_add,
+                  color: Colors.deepPurple[100],
+                ),
+                label: Text(
+                  "Register",
+                  style: TextStyle(color: Colors.white),
+                ))
+          ],
+        ),
+        body: Container(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              showSignInForm ? signInForm : signInRegularButton,
+              SizedBox(
+                width: 20.0,
               ),
-              label: Text(
-                "Register",
-                style: TextStyle(color: Colors.white),
-              ))
-        ],
-      ),
-      body: ListView(
-        children: <Widget>[
-          showSignInForm ? signInForm : signInRegularButton,
-          signInAnonymouslyButton,
-        ],
-      ),
-    );
+              signInAnonymouslyButton,
+            ],
+          ),
+        ));
   }
 }
