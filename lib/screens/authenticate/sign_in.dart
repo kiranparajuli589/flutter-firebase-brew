@@ -16,6 +16,7 @@ class _SignInState extends State<SignIn> {
   bool showSignInForm = false;
   String email = "";
   String password = "";
+  String error = "";
 
   @override
   Widget build(BuildContext context) {
@@ -37,19 +38,32 @@ class _SignInState extends State<SignIn> {
             },
             validator: (value) {
               if (value.isEmpty) {
-                return "Please enter email";
+                return "Enter an email address.";
               }
               return null;
             },
           ),
           SizedBox(height: 20.0),
           TextFormField(
+            validator: (value) {
+              if (value.length < 6) {
+                return "Enter a password 6+ chars long.";
+              }
+              return null;
+            },
             onChanged: (value) {
               setState(() {
                 password = value;
               });
             },
             obscureText: true,
+          ),
+          SizedBox(
+            height: 20,
+          ),
+          Text(
+            error,
+            style: TextStyle(color: Colors.red, fontSize: 14.0),
           ),
           Row(
             children: [
@@ -58,8 +72,17 @@ class _SignInState extends State<SignIn> {
                 color: Colors.green[400],
                 child: Text(" Sign In "),
                 onPressed: () async {
-                  print(email);
-                  print(password);
+                  if (_formKey.currentState.validate()) {
+                    dynamic result =
+                        await _auth.signInWithEmailAndPassword(email, password);
+                    if (result == null) {
+                      setState(() {
+                        error = "Couldn't signin with given credentials.";
+                      });
+                    } else {
+                      print("SignIn(email/password) success");
+                    }
+                  }
                 },
               ),
               SizedBox(width: 20.0, height: 20.0),
@@ -85,9 +108,11 @@ class _SignInState extends State<SignIn> {
         onPressed: () async {
           dynamic result = await _auth.signInAnonymously();
           if (result == null) {
-            print("error signing in");
+            setState(() {
+              error = "Error signing in.";
+            });
           } else {
-            print("signed in");
+            print("SignIn(anonymous) success");
             print(result.uid);
           }
         });
