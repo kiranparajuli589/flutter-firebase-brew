@@ -6,7 +6,13 @@ class AuthService {
 
   // create user obj based on FirebaseUser
   User _userFromFirebaseUser(FirebaseUser user) {
-    return user != null ? User(uid: user.uid): null;
+    return user != null ? User(uid: user.uid) : null;
+  }
+
+  // auth changes user stream
+  Stream<User> get user {
+    return _auth.onAuthStateChanged.map(_userFromFirebaseUser);  // <--|
+    // .map((FirebaseUser user) => _userFromFirebaseUser(user)); same -+
   }
 
   // sign in Anonymously
@@ -16,9 +22,9 @@ class AuthService {
       FirebaseUser user = result.user;
       return _userFromFirebaseUser(user);
     } catch (e) {
-        print(e.toString());
-        return null;
-      }
+      print(e.toString());
+      return null;
+    }
   }
 
   // sign in with email & password
