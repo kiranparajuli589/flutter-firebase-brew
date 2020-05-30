@@ -31,6 +31,15 @@ class _SignInState extends State<SignIn> {
           ),
           SizedBox(height: 20.0),
           TextFormField(
+            decoration: InputDecoration(
+              labelText: "Email Address",
+              labelStyle: TextStyle(fontSize: 22.0),
+              hintText: "example@host.com",
+              hintStyle: TextStyle(
+                color: Colors.grey[400],
+                fontStyle: FontStyle.italic,
+              ),
+            ),
             onChanged: (value) {
               setState(() {
                 email = value;
@@ -45,6 +54,15 @@ class _SignInState extends State<SignIn> {
           ),
           SizedBox(height: 20.0),
           TextFormField(
+            decoration: InputDecoration(
+              labelText: "Password",
+              labelStyle: TextStyle(fontSize: 22.0),
+              hintText: "password",
+              hintStyle: TextStyle(
+                color: Colors.grey[400],
+                fontStyle: FontStyle.italic,
+              ),
+            ),
             validator: (value) {
               if (value.length < 6) {
                 return "Enter a password 6+ chars long.";
