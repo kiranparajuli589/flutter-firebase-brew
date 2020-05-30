@@ -10,9 +10,9 @@ class AuthService {
       FirebaseUser user = result.user;
       return user;
     } catch (e) {
-      print(e.toString());
-      return null;
-    }
+        print(e.toString());
+        return null;
+      }
   }
 
   // signin with email & password
