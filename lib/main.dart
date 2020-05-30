@@ -1,4 +1,5 @@
 import 'package:first_flutter_brew/models/user.dart';
+import 'package:first_flutter_brew/screens/style.dart';
 import 'package:first_flutter_brew/screens/wrapper.dart';
 import 'package:first_flutter_brew/services/auth.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +13,7 @@ class MyApp extends StatelessWidget {
     return StreamProvider<User>.value(
       value: AuthService().user, // accessing user stream from auth service
       child: MaterialApp(
+        theme: appTheme(),
         home: Wrapper(),
       ),
     );
