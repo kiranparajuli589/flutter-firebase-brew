@@ -11,7 +11,7 @@ class AuthService {
 
   // auth changes user stream
   Stream<User> get user {
-    return _auth.onAuthStateChanged.map(_userFromFirebaseUser);  // <--|
+    return _auth.onAuthStateChanged.map(_userFromFirebaseUser); // <--|
     // .map((FirebaseUser user) => _userFromFirebaseUser(user)); same -+
   }
 
@@ -32,4 +32,12 @@ class AuthService {
   //  register with email & password
 
   // signout
+  Future signOut() async {
+    try {
+      return await _auth.signOut();
+    } catch (e) {
+      print(e.toString());
+      return null;
+    }
+  }
 }
